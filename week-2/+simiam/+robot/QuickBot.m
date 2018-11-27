@@ -195,7 +195,7 @@ classdef QuickBot < simiam.robot.Robot
             %% START CODE BLOCK %%
             
             ir_voltages = ir_array_values;
-            coeff = [0 0 0 0 0];
+            coeff = [-0.0205 0.1799 -0.6340 1.1619 -1.1804 0.6208];
             
             %% END CODE BLOCK %%
             
