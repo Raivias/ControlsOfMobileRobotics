@@ -40,9 +40,9 @@ classdef GoToGoal < simiam.controller.Controller
             obj = obj@simiam.controller.Controller('go_to_goal');
             
             % initialize memory banks
-            obj.Kp = 0;
-            obj.Ki = 0;
-            obj.Kd = 0;
+            obj.Kp = 0.5;
+            obj.Ki = 0.5;
+            obj.Kd = 0.5;
                         
             % errors
             obj.E_k = 0;
@@ -76,39 +76,42 @@ classdef GoToGoal < simiam.controller.Controller
             % 1. Calculate the heading (angle) to the goal.
             
             % distance between goal and robot in x-direction
-            u_x = 0;     
+            u_x = x - x_g;     
                 
             % distance between goal and robot in y-direction
-            u_y = 0;
+            u_y = y - y_g;
                 
             % angle from robot to goal. Hint: use ATAN2, u_x, u_y here.
-            theta_g = 0;
-            
+            theta_g = atan2(u_y, u_x);
+            fprintf("To Goal: x=%d\t y=%d\t theta=%d\n",u_x, u_y, theta_g)
             % 2. Calculate the heading error.
             
             % error between the goal angle and robot's angle
             % Hint: Use ATAN2 to make sure this stays in [-pi,pi].
-            e_k = 0;            
-                
+            theta_diff = theta_g - theta;
+            e_k = atan2(real(theta_diff), imag(theta_diff));
+            
+            fprintf("theta_diff=%d\t e_k=%d\n",theta_diff, e_k)
             % 3. Calculate PID for the steering angle 
             
             % error for the proportional term
-            e_P = 0;
+            e_P = e_k;
             
             % error for the integral term. Hint: Approximate the integral using
             % the accumulated error, obj.E_k, and the error for
             % this time step, e_k.
-            e_I = 0;
+            e_I = (obj.E_k * dt) + ((e_k * dt) / 2);
                      
             % error for the derivative term. Hint: Approximate the derivative
             % using the previous error, obj.e_k_1, and the
             % error for this time step, e_k.
-            e_D = 0;    
-            
+            e_D = (e_k - obj.e_k_1) / dt;    
+            fprintf("K: P=%d\t I=%d\t D=%d\n",obj.Kp, obj.Ki, obj.Kd)
+            fprintf("Errors: P=%d\t I=%d\t D=%d\n",e_P, e_I, e_D)
             %% END CODE BLOCK %%
                   
             w = obj.Kp*e_P + obj.Ki*e_I + obj.Kd*e_D;
-            
+            fprintf("v=%d\t w=%d\n",v,w)
             % 4. Save errors for next time step
             obj.E_k = e_I;
             obj.e_k_1 = e_k;

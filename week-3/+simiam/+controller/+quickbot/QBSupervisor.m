@@ -132,18 +132,20 @@ classdef QBSupervisor < simiam.controller.Supervisor
             % 4. Shift vel_r and vel_l if they exceed max/min vel
             
             %% START CODE BLOCK %%
-            
+            fprintf("max vel= %d\n",obj.robot.max_vel);
+            fprintf("velmax = %d\n",vel_rl_max);
+            fprintf("vel_l=%d\t vel_r=%d\n",vel_l_d,vel_r_d)
             if (vel_rl_max > obj.robot.max_vel)
-                vel_r = vel_r_d - 0;
-                vel_l = vel_l_d - 0;
+                vel_r = vel_r_d - (vel_rl_max + obj.robot.max_vel);
+                vel_l = vel_l_d - (vel_rl_max + obj.robot.max_vel);
             elseif (vel_rl_min < -obj.robot.max_vel)
-                vel_r = vel_r_d - 0;
-                vel_l = vel_l_d - 0;
+                vel_r = vel_r_d - (vel_rl_min - obj.robot.max_vel);
+                vel_l = vel_l_d - (vel_rl_min - obj.robot.max_vel);
             else
                 vel_r = vel_r_d;
                 vel_l = vel_l_d;
             end
-            
+            fprintf("v=%d\t w=%d\t r=%d\t l=%d\n", v,w,vel_r,vel_l);
             %% END CODE BLOCK %%
             
             % 5. Limit to hardware
