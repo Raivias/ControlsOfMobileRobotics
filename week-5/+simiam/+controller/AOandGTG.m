@@ -73,7 +73,13 @@ classdef AOandGTG < simiam.controller.Controller
             %% START CODE BLOCK %%
             
             % 3. Blend the two vectors
-            u_ao_gtg = zeros(2,1);
+            % I can put Alpha as high as 0.145 and have the robot avoid
+            % obsticals and get to the goal. However I believe that if I
+            % had u_ao scaled as I got closer to an obstacle I could more
+            % set alpha higher and get the robot to go more directly to the
+            % goal rather than bouncing off walls.
+            alpha = 0.12;
+            u_ao_gtg = alpha * u_gtg + ((1 - alpha) * u_ao);
             
             %% END CODE BLOCK %%
             

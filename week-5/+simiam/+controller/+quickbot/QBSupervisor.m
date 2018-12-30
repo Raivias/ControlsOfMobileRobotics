@@ -88,7 +88,7 @@ classdef QBSupervisor < simiam.controller.Supervisor
             obj.d_at_obs    = 0.25;                
             obj.d_unsafe    = 0.10;
             
-            obj.is_blending = true;
+            obj.is_blending = false;
             
             obj.p = simiam.util.Plotter();
             obj.current_controller.p = obj.p;
@@ -122,9 +122,17 @@ classdef QBSupervisor < simiam.controller.Supervisor
                 end                
             else
                 %% START CODE BLOCK %%
-                
-                obj.switch_to_state('stop');
-                
+                if (obj.check_event('at_goal'))
+                    obj.switch_to_state('stop');
+                elseif (obj.check_event('at_obstacle'))
+                    obj.switch_to_state('avoid_obstacles');
+                elseif (obj.check_event('obstacle_cleared'))
+                    obj.switch_to_state('go_to_goal');
+                elseif (obj.check_event('unsafe'))
+                    obj.switch_to_state('ao_and_gtg');
+                else
+                    obj.switch_to_state('stop');
+                end
                 %% END CODE BLOCK %%
             end
             
@@ -275,7 +283,7 @@ classdef QBSupervisor < simiam.controller.Supervisor
                     end
                 end
             else
-%                 fprintf('already in state %s\n', name);
+                 fprintf('already in state %s\n', name);
                 return
             end
             
